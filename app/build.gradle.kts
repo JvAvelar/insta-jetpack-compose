@@ -48,6 +48,9 @@ dependencies {
     // viewmodel
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.5")
 
+    // TestNavHostController
+    androidTestImplementation ("androidx.navigation:navigation-testing:2.8.9")
+    androidTestImplementation ("androidx.test:core-ktx:1.5.0")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
