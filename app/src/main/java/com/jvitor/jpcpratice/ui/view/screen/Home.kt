@@ -1,21 +1,18 @@
-package com.jvitor.jpcpratice.ui.view.components
+package com.jvitor.jpcpratice.ui.view.screen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.jvitor.jpcpratice.ui.view.components.BottomBar
+import com.jvitor.jpcpratice.ui.view.components.ItemFeatured
+import com.jvitor.jpcpratice.ui.view.components.ItemPost
+import com.jvitor.jpcpratice.ui.view.components.TopBar
 import com.jvitor.jpcpratice.viewmodel.ScreenViewModel
 
 @Composable
@@ -34,9 +31,9 @@ fun Home(
 
         Column(modifier = Modifier.padding(innerPadding)) {
 
-            ItemDestaque(viewModel, navController, Modifier)
+            ItemFeatured(viewModel, navController, Modifier)
 
-            ItemPostagem(viewModel, navController, Modifier)
+            ItemPost(viewModel, navController, Modifier)
         }
     }
 }
@@ -45,8 +42,5 @@ fun Home(
 @Composable
 @Preview(showBackground = true)
 fun HomePreview() {
-
-    //ItemDestaque()
     Home(viewModel(), rememberNavController())
-
 }
