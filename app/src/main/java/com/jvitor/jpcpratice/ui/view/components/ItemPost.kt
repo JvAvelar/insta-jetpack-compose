@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,14 +39,15 @@ import com.jvitor.jpcpratice.viewmodel.ScreenViewModel
 
 
 @Composable
-fun ItemPostagem(
+fun ItemPost(
     viewModel: ScreenViewModel,
     navController: NavController,
     modifier: Modifier = Modifier
 ) {
-    val listaPostagem = viewModel.postagem.collectAsState().value
-    LazyColumn(modifier.padding(top = 8.dp, bottom = 8.dp)) {
-        items(listaPostagem) { post ->
+    val listPost = viewModel.post.collectAsState().value
+    LazyColumn(modifier.testTag("feature_lazy_column")
+        .padding(top = 8.dp, bottom = 8.dp)) {
+        items(listPost) { post ->
             Column(
                 modifier = modifier
                     .fillMaxWidth()
@@ -59,9 +61,10 @@ fun ItemPostagem(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Image(
-                        painter = painterResource(post.fotoPerfil),
-                        contentDescription = null,
+                        painter = painterResource(post.profilePhoto),
+                        contentDescription = "profile photo",
                         modifier = Modifier
+                            .testTag("profile_photo")
                             .size(40.dp)
                             .background(Color.LightGray, CircleShape)
                             .clip(CircleShape),
@@ -71,23 +74,28 @@ fun ItemPostagem(
                     Text(
                         text = post.name,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(start = 8.dp, end = 220.dp),
+                        modifier = Modifier
+                            .padding(start = 8.dp, end = 220.dp)
+                            .testTag("user_name")
                     )
 
-                    IconButton(onClick = {}) {
+                    IconButton(
+                        onClick = {},
+                        modifier = Modifier.testTag("icon_menu")) {
                         Icon(
                             painter = painterResource(R.drawable.ic_menu),
-                            contentDescription = null,
+                            contentDescription = "icon menu",
                         )
                     }
                 }
 
                 Image(
-                    painter = painterResource(post.fotoPost),
-                    contentDescription = null
+                    modifier = Modifier.testTag("post_photo"),
+                    painter = painterResource(post.postPhoto),
+                    contentDescription = "post photo"
                 )
 
-                // Icones
+                // Icons
                 Row(
                     modifier = Modifier,
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -97,62 +105,74 @@ fun ItemPostagem(
                     var isLiked by remember { mutableStateOf(false) }
                     var isSalved by remember { mutableStateOf(false) }
 
-                    IconButton(onClick = { isLiked = !isLiked }) {
+                    IconButton(
+                        onClick = { isLiked = !isLiked },
+                        modifier = Modifier.testTag("btn_like")
+                    ) {
                         Icon(
                             painter = if (isLiked) painterResource(R.drawable.ic_favorite_red)
-                            else  painterResource(R.drawable.ic_favorite_empty),
+                            else painterResource(R.drawable.ic_favorite_empty),
                             contentDescription = if (isLiked) "Descutir" else "Curtir",
                             tint = if (isLiked) Color.Red else Color.Unspecified
-
                         )
                     }
 
-                    IconButton(onClick = {}) {
+                    IconButton(
+                        onClick = {},
+                        modifier = Modifier.testTag("icon_message")) {
                         Icon(
                             painter = painterResource(R.drawable.ic_message),
-                            contentDescription = null
+                            contentDescription = "icon message"
                         )
                     }
 
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = {}, modifier = Modifier.testTag("icon_send")) {
                         Icon(
                             painter = painterResource(R.drawable.ic_send),
-                            contentDescription = null
+                            contentDescription = "icon send"
                         )
                     }
 
                     IconButton(
                         onClick = { isSalved = !isSalved },
-                        modifier = Modifier.padding(start = 180.dp)
+                        modifier = Modifier
+                            .padding(start = 180.dp)
+                            .testTag("icon_save")
                     ) {
                         Icon(
                             painter = if (!isSalved) painterResource(R.drawable.ic_save_empty)
                             else painterResource(R.drawable.ic_save),
                             contentDescription = if (isSalved) "Não salvo" else "Salvo",
 
-                        )
+                            )
                     }
                 }
 
-                Row {
+                Row(modifier = Modifier.testTag("row_icons_post")) {
                     Text(
                         text = post.name,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(start = 8.dp)
+                        modifier = Modifier
+                            .padding(start = 8.dp)
+                            .testTag("user_name")
                     )
 
                     Text(
-                        text = post.descricao,
+                        text = post.description,
                         fontSize = 16.sp,
-                        modifier = Modifier.padding(start = 4.dp)
+                        modifier = Modifier
+                            .padding(start = 4.dp)
+                            .testTag("text_description")
                     )
                 }
 
                 Text(
-                    text = "Há ${post.horario} horas",
+                    text = "Há ${post.time} horas",
                     fontSize = 12.sp,
-                    modifier = Modifier.padding(start = 8.dp)
+                    modifier = Modifier
+                        .padding(start = 8.dp)
+                        .testTag("text_time")
                 )
             }
         }
@@ -163,5 +183,5 @@ fun ItemPostagem(
 @Composable
 @Preview(showBackground = true)
 fun ItemPostagemPreview() {
-    ItemPostagem(viewModel(), rememberNavController())
+    ItemPost(viewModel(), rememberNavController())
 }
