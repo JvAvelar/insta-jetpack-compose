@@ -17,31 +17,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.jvitor.jpcpratice.R
 import com.jvitor.jpcpratice.viewmodel.ScreenViewModel
 
 @Composable
-fun ItemDestaque(
+fun ItemFeatured(
     viewModel: ScreenViewModel,
     navController: NavController,
     modifier: Modifier = Modifier
 ) {
-    val listaDestaque = viewModel.destaque.collectAsState().value
-    LazyRow(modifier){
-        items(listaDestaque) { destaque ->
+    val listFeatured = viewModel.featured.collectAsState().value
+
+    LazyRow(modifier.testTag("lazy_row_featured")) {
+        items(listFeatured) { feat ->
             Column(
-                modifier = Modifier.padding(8.dp),
+                modifier = Modifier.padding(8.dp).testTag("column_featured_items"),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
                 Image(
-                    painter = painterResource(destaque.fotoPerfil),
-                    contentDescription = null,
+                    painter = painterResource(feat.profilePhoto),
+                    contentDescription = "profile photo",
                     modifier = Modifier
+                        .testTag("img_profile_photo_featured")
                         .size(56.dp)
                         .background(Color.LightGray, CircleShape)
                         .clip(CircleShape),
@@ -49,10 +50,13 @@ fun ItemDestaque(
                 )
 
                 Text(
-                    text = destaque.name,
-                    modifier = Modifier.padding(4.dp)
+                    text = feat.name,
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .testTag("txt_user_name_featured")
                 )
             }
         }
     }
 }
+
