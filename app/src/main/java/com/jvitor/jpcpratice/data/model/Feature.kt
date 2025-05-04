@@ -1,6 +1,6 @@
 package com.jvitor.jpcpratice.data.model
 
-data class Destaque(
-    val fotoPerfil: Int,
+data class Feature(
+    val profilePhoto: Int,
     val name: String
 )
