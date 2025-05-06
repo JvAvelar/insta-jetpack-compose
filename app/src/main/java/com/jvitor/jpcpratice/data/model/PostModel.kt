@@ -1,6 +1,6 @@
 package com.jvitor.jpcpratice.data.model
 
-data class Post(
+data class PostModel(
     val profilePhoto: Int,
     val name: String,
     val postPhoto: Int,
