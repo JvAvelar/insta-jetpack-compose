@@ -1,6 +1,6 @@
 package com.jvitor.jpcpratice.data.model
 
-data class Feature(
+data class FeatureModel(
     val profilePhoto: Int,
     val name: String
 )
