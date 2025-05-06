@@ -5,19 +5,19 @@
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="myTest()">
+      <SelectionState runConfigName="testPost()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="testItemDestaque()">
+      <SelectionState runConfigName="testFeatured()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="testItemPost()">
+      <SelectionState runConfigName="testPostedPhotoPost()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="InstagramTest">
+      <SelectionState runConfigName="testIconsInteractionPost()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="testItemFeatured()">
+      <SelectionState runConfigName="testProfilePost()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
