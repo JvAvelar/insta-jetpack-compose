@@ -1,6 +1,6 @@
 package com.jvitor.jpcpratice
 
-import androidx.compose.runtime.Composable
+import androidx.compose.ui.test.assertContentDescriptionEquals
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasParent
@@ -8,19 +8,15 @@ import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
-import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onFirst
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToIndex
 import androidx.navigation.compose.ComposeNavigator
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.testing.TestNavHostController
 import androidx.test.core.app.ApplicationProvider
-import com.jvitor.jpcpratice.ui.view.components.ItemFeatured
-import com.jvitor.jpcpratice.ui.view.components.ItemPost
-import com.jvitor.jpcpratice.ui.view.screen.Home
-import com.jvitor.jpcpratice.ui.view.screen.PrimaryScreen
-import com.jvitor.jpcpratice.ui.view.screen.SecondScreen
+import com.jvitor.jpcpratice.ui.view.components.Featured
+import com.jvitor.jpcpratice.ui.view.components.Post
 import com.jvitor.jpcpratice.viewmodel.ScreenViewModel
 import org.junit.Before
 import org.junit.Rule
@@ -41,7 +37,6 @@ class InstagramTest {
             getFeatured()
             getPost()
         }
-
         // Inicializa o NavController
         navController = TestNavHostController(
             ApplicationProvider.getApplicationContext()
@@ -49,25 +44,14 @@ class InstagramTest {
         navController.navigatorProvider.addNavigator(ComposeNavigator())
     }
 
-    @Composable
-    private fun SetUpNavigation() {
-        NavHost(navController, startDestination = "home") {
-            composable("home") {
-                Home(viewModel, navController)
-                viewModel.getFeatured()
-                viewModel.getPost()
-            }
-            composable("primary") { PrimaryScreen(navController) }
-            composable("second") { SecondScreen(navController) }
-        }
-    }
-
     @Test
-    fun testItemFeatured() {
+    fun testFeatured() {
         // Configuração das rotas de navegação
         composeTestRule.setContent {
-            ItemFeatured(viewModel, navController)
+            Featured(viewModel)
         }
+        // quantidade de itens renderizado na tela
+        val quantityRenderized = 6
 
         // Tags dos componentes da tela Featured
         val tagLazy = "lazy_row_featured"
@@ -75,55 +59,178 @@ class InstagramTest {
         val tagImage = "img_profile_photo_featured"
         val tagName = "txt_user_name_featured"
 
-        // Scroll do LazyRow (selecionado o componente bem específico)
+        // Scroll do LazyRow
         composeTestRule.onNode(
             hasTestTag(tagLazy) and hasScrollAction()
         ).apply {
             assertExists("O componente LazyRow não existe na tela ItemFeatured")
             assertIsDisplayed()
-            performScrollToIndex(0)
+            performScrollToIndex(quantityRenderized)
         }
 
-        // Foto do usuario
-        val valueRender = 6 // quantidade de itens renderizado na tela
+        // Esperar a animação
+        composeTestRule.waitForIdle()
 
         // Verifica se está renderizando os 6 destaques na tela
         composeTestRule.onAllNodesWithTag(tagImage)
-            .apply { assertCountEquals(valueRender) }
+            .assertCountEquals(quantityRenderized)
 
-        // Verifica se está mostrando as fotos
+        // Verifica se está mostrando as fotos de perfil dos destaques
         composeTestRule.onAllNodes(
             hasTestTag(tagImage) and hasParent(hasTestTag(tagColumn))
         )
-            .apply { assertCountEquals(valueRender) }
+            .assertCountEquals(quantityRenderized)
 
-        // Verifica se está mostrando os nomes
+        // Verifica se está mostrando os nomes nos destaques
         composeTestRule.onAllNodes(
             hasTestTag(tagName) and hasParent(hasTestTag(tagColumn))
-        ).apply { assertCountEquals(valueRender) }
-
+        ).assertCountEquals(quantityRenderized)
     }
 
     @Test
-    fun testItemPost() {
-
+    fun testProfilePost() {
         composeTestRule.setContent {
-            ItemPost(viewModel, navController)
+            Post(viewModel, navController)
+        }
+        // quantidade de itens renderizado na tela
+        val quantityRenderized = 2
+
+        // Tags dos componentes da tela Post
+        val tagLazyColumnPost = "lazy_column_post"
+        val tagRowProfile = "row_main_profile_post"
+        val tagImgProfile = "img_profile_photo_post"
+        val tagTextProfile = "txt_profile_name_post"
+        val tagBtnProfile = "btn_profile_menu_post"
+
+        // Esperar renderizar normalmente
+        composeTestRule.waitForIdle()
+
+        // Scroll do LazyColumn
+        composeTestRule.onNode(
+            hasTestTag(tagLazyColumnPost) and
+                    hasScrollAction()
+        ).apply {
+            assertExists("O componente $tagLazyColumnPost não existe na tela")
+            assertIsDisplayed()
+            performScrollToIndex(quantityRenderized)
         }
 
-        // number of items
+        // Verifica se está mostrando a foto de perfil
+        composeTestRule.onAllNodesWithTag(tagImgProfile)
+            .onFirst()
+            .assertExists()
+            .assertIsDisplayed()
 
+        // Verifica se está mostrando o nome do usuário
+        composeTestRule.onAllNodesWithTag(tagTextProfile)
+            .onFirst()
+            .assertExists()
+            .assertIsDisplayed()
 
-        // profile photo
-
-
-        // Rolar através de todos os itens
-
-        // Click no botão
-        composeTestRule.onNodeWithTag("btn_like").performClick()
-
-
+        // Verifica se está mostrando o icone do perfil
+        composeTestRule.onAllNodesWithTag(tagBtnProfile)
+            .onFirst()
+            .assertExists("O component $tagBtnProfile não existe na tela")
+            .assertIsDisplayed()
     }
 
+    @Test
+    fun testPostedPhotoPost() {
+        composeTestRule.setContent {
+            Post(viewModel, navController)
+        }
+        // Tags foto postada
+        val tagBox = "box_main_photo_post"
+        val tagImg = "img_posted_photo_post"
 
+        // Verifica se mostra a foto que foi postada
+        composeTestRule.onAllNodes(
+            hasTestTag(tagImg) and
+                    hasParent(hasTestTag(tagBox))
+        )
+            .onFirst()
+            .apply {
+                assertExists("O componente $tagImg não está mostrado na tela")
+                assertIsDisplayed()
+                assertContentDescriptionEquals("post photo")
+            }
+    }
+
+    @Test
+    fun testIconsInteractionPost() {
+        composeTestRule.setContent {
+            Post(viewModel, navController)
+        }
+        // Tags icones de interação
+        val tagRow = "row_main_icons_post"
+        val tagBtnLike = "btn_like_post"
+        val tagBtnSave = "btn_save_post"
+
+        // Do something
+        // Clica no botão de like
+        composeTestRule.onAllNodes(
+            hasTestTag(tagBtnLike) and
+            hasParent(hasTestTag(tagRow))
+        )
+            .onFirst()
+            .performClick()
+
+        // Clica no botão de salvar
+        composeTestRule.onAllNodes(
+            hasTestTag(tagBtnSave) and
+                    hasParent(hasTestTag(tagRow))
+        )
+            .onFirst()
+            .performClick()
+
+        // Check something
+        // Verifica se os botões de like e save mudou a cor e a descrição de acordo com o click
+        composeTestRule.onNodeWithContentDescription("liked")
+            .assertExists()
+            .assertIsDisplayed()
+
+        composeTestRule.onNodeWithContentDescription("saved")
+            .assertExists()
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun testDescriptionAndTimePost() {
+        composeTestRule.setContent {
+            Post(viewModel, navController)
+        }
+        // Tags descrição, nome e tempo
+        val tagColumn = "column_main_description_post"
+        val tagRow = "row_name_and_description_post"
+        val tagTxtName = "txt_name_description_post"
+        val tagTxtDescription = "txt_description_post"
+        val tagTxtTime = "txt_time_post"
+
+        // Verifica se o nome está sendo mostrado
+        composeTestRule.onAllNodes(
+            hasTestTag(tagTxtName) and
+            hasParent(hasTestTag(tagRow))
+        )
+            .onFirst()
+            .assertExists("O componente $tagTxtName não existe na tela")
+            .assertIsDisplayed()
+
+        // Verifica se a descrição está sendo mostrada
+        composeTestRule.onAllNodes(
+            hasTestTag(tagTxtDescription) and
+            hasParent(hasTestTag(tagRow))
+        )
+            .onFirst()
+            .assertExists("O componente $tagTxtDescription não existe na tela")
+            .assertIsDisplayed()
+
+        // Verifica se o time está sendo mostrado
+        composeTestRule.onAllNodes(
+            hasTestTag(tagTxtTime) and
+            hasParent(hasTestTag(tagColumn))
+        )
+            .onFirst()
+            .assertExists("O componente $tagTxtTime não existe na tela")
+            .assertIsDisplayed()
+    }
 }
